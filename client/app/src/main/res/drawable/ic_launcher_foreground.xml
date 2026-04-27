@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Simplified placeholder for the foreground, since we'll use the PNG for the launcher icon in another way if needed,
+         but for adaptive icons we should ideally have a vector.
+         However, the user wants to use app_icon_new.png.
+         I will try to set the app icon to the PNG directly in Manifest first. -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,30h48v48h-48z" />
+</vector>

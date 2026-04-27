@@ -1,0 +1,41 @@
+# Project specific
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+
+# Security - Ignore sensitive files
+google-services.json
+*.jks
+*.keystore
+secrets.xml
+local.properties
+
+# Gradle
+.gradle
+build/
+
+# Android Studio
+*.iws
+*.iml
+*.ipr
+.idea/
+.navigation/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Secrets & Keys
+secrets.properties
+local.properties
+google-services.json
+*.jks
+*.keystore
+*.p12
+*.key
+*.pem
