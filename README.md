@@ -212,9 +212,10 @@ See the full [LICENSE](LICENSE) file for details.
 
 <div align="center">
 
-### Dip Bhattacharjee
+### [Dip Bhattacharjee](https://github.com/dipbhattacharjee) & [Deep Baidya](https://github.com/deepbaidya811)
 
 [![GitHub](https://img.shields.io/badge/GitHub-dipbhattacharjee-181717?style=for-the-badge&logo=github)](https://github.com/dipbhattacharjee)
+[![GitHub](https://img.shields.io/badge/GitHub-deepbaidya-181717?style=for-the-badge&logo=github)](https://github.com/deepbaidya811)
 
 *Building free tools for MAKAUT students, one commit at a time.*
 
