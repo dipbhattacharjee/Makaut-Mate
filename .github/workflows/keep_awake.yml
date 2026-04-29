@@ -1,0 +1,14 @@
+name: Keep Render Awake
+
+on:
+  schedule:
+    # Runs every 14 minutes (Render sleeps after 15)
+    - cron: '*/14 * * * *'
+  workflow_dispatch: # Allows you to run it manually for testing
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Service
+        run: curl -I https://makaut-mate-rx2i.onrender.com/
