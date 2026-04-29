@@ -103,6 +103,20 @@ node server.js  # Server with logs
 ```
 
 ---
+**Deploy URL**
+```
+https://makaut-mate.onrender.com
+{
+  "message": "MAKAUT API Server",
+  "endpoints": {
+    "notices": "GET /api/notices",
+    "marks": "POST /api/student/marks",
+    "activity": "POST /api/student/activity",
+    "gradeCard": "POST /api/student/grade-card"
+  }
+}
+```
+---
 
 ## 🔒 Security
 
