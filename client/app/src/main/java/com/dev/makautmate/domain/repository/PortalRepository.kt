@@ -5,5 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface PortalRepository {
     fun getStudentProfile(): Flow<StudentProfile?>
-    suspend fun syncProfile(roll: String, pass: String): Result<Unit>
+    suspend fun syncProfile(roll: String, dob: String): Result<Unit>
+    suspend fun saveProfile(profile: StudentProfile)
 }

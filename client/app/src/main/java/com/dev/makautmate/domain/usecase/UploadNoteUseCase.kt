@@ -12,11 +12,13 @@ class UploadNoteUseCase @Inject constructor(
         author: String,
         semester: String,
         subject: String,
+        course: String,
+        type: String,
         fileUri: Uri
     ): Result<Unit> {
-        if (title.isBlank() || semester.isBlank() || subject.isBlank()) {
+        if (title.isBlank() || semester.isBlank() || subject.isBlank() || course.isBlank() || type.isBlank()) {
             return Result.failure(Exception("Required fields are missing"))
         }
-        return repository.uploadNote(title, author, semester, subject, fileUri)
+        return repository.uploadNote(title, author, semester, subject, course, type, fileUri)
     }
 }

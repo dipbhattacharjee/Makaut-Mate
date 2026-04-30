@@ -7,8 +7,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.FileDownload
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,21 +25,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.dev.makautmate.ui.components.BookLoader
 import com.dev.makautmate.ui.components.SkeletonCard
 import com.dev.makautmate.ui.theme.BluePrimary
 import com.dev.makautmate.ui.viewmodel.BookDisplayItem
 import com.dev.makautmate.ui.viewmodel.BookViewModel
 
+import androidx.compose.material.icons.rounded.FileDownload
+import com.dev.makautmate.ui.viewmodel.DownloadViewModel
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BooksScreen(
     onBack: () -> Unit,
-    viewModel: BookViewModel = hiltViewModel()
+    onNavigateToPortalUrl: (String) -> Unit,
+    viewModel: BookViewModel = hiltViewModel(),
+    downloadViewModel: DownloadViewModel = hiltViewModel()
 ) {
     val books by viewModel.books.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
-    val uriHandler = LocalUriHandler.current
 
     Box(
         modifier = Modifier
@@ -54,7 +60,7 @@ fun BooksScreen(
             
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null, tint = Color.White)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Library", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
@@ -73,7 +79,7 @@ fun BooksScreen(
                     .height(56.dp)
                     .clip(RoundedCornerShape(28.dp)),
                 placeholder = { Text("Search 10M+ free books...", color = Color.Gray) },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
+                leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null, tint = Color.Gray) },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.White.copy(alpha = 0.05f),
                     unfocusedContainerColor = Color.White.copy(alpha = 0.05f),
@@ -88,9 +94,17 @@ fun BooksScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             if (isLoading) {
-                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    repeat(4) {
-                        SkeletonCard()
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        BookLoader()
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Browsing Library...", color = Color.Gray, fontSize = 14.sp)
+                        Spacer(modifier = Modifier.height(32.dp))
+                        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                            repeat(3) {
+                                SkeletonCard()
+                            }
+                        }
                     }
                 }
             } else if (books.isEmpty() && searchQuery.isNotEmpty()) {
@@ -104,9 +118,15 @@ fun BooksScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(books) { book ->
-                        BookListItem(book) {
-                            book.readUrl?.let { uriHandler.openUri(it) }
-                        }
+                        BookListItem(
+                            book = book,
+                            onReadClick = {
+                                book.readUrl?.let { onNavigateToPortalUrl(it) }
+                            },
+                            onDownloadClick = {
+                                downloadViewModel.downloadBook(book)
+                            }
+                        )
                     }
                 }
             }
@@ -116,9 +136,13 @@ fun BooksScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookListItem(book: BookDisplayItem, onClick: () -> Unit) {
+fun BookListItem(
+    book: BookDisplayItem,
+    onReadClick: () -> Unit,
+    onDownloadClick: () -> Unit
+) {
     Surface(
-        onClick = onClick,
+        onClick = onReadClick,
         color = Color.Transparent
     ) {
         Row(
@@ -135,7 +159,7 @@ fun BookListItem(book: BookDisplayItem, onClick: () -> Unit) {
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(16.dp))
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = book.title,
                     color = Color.White,
@@ -172,6 +196,13 @@ fun BookListItem(book: BookDisplayItem, onClick: () -> Unit) {
                         fontSize = 10.sp
                     )
                 }
+            }
+            IconButton(onClick = onDownloadClick) {
+                Icon(
+                    Icons.Rounded.FileDownload,
+                    contentDescription = "Download",
+                    tint = BluePrimary
+                )
             }
         }
     }

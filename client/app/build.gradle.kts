@@ -33,6 +33,9 @@ android {
         buildConfigField("String", "CLOUDINARY_API_SECRET", "\"${localProperties.getProperty("CLOUDINARY_API_SECRET")}\"")
         buildConfigField("String", "GEMINI_API_KEY", "\"${localProperties.getProperty("GEMINI_API_KEY")}\"")
         buildConfigField("String", "OPEN_ROUTER_API_KEY", "\"${localProperties.getProperty("OPEN_ROUTER_AI_API_KEY")}\"")
+        buildConfigField("String", "YOUTUBE_API_KEY", "\"${localProperties.getProperty("YOUTUBE_API_KEY")}\"")
+        val portalBaseUrl = localProperties.getProperty("PORTAL_BASE_URL") ?: "https://makaut-mate-rx2i.onrender.com/"
+        buildConfigField("String", "PORTAL_BASE_URL", "\"$portalBaseUrl\"")
     }
 
     buildTypes {
@@ -64,6 +67,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.animation)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation.compose)
@@ -82,11 +86,16 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.messaging)
+    implementation(libs.firebase.appcheck.playintegrity)
+    implementation(libs.firebase.appcheck.debug)
     implementation(libs.play.services.auth)
 
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
+
+    // WebKit
+    implementation(libs.androidx.webkit)
 
     // Security
     implementation(libs.androidx.security.crypto)

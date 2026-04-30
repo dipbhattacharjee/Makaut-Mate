@@ -1,9 +1,11 @@
 package com.dev.makautmate.di
 
+import com.dev.makautmate.BuildConfig
+import com.dev.makautmate.data.remote.OpenRouterApiService
 import com.dev.makautmate.data.remote.BookApiService
 import com.dev.makautmate.data.remote.OpenLibraryApiService
-import com.dev.makautmate.data.remote.PortalApiService
 import com.dev.makautmate.data.remote.YoutubeApiService
+import com.dev.makautmate.data.remote.MakautMateApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,7 +34,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://your-python-api.com/") // Replace with your actual API URL
+            .baseUrl(BuildConfig.PORTAL_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -40,9 +42,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun providePortalApiService(retrofit: Retrofit): PortalApiService {
-        return retrofit.create(PortalApiService::class.java)
+    fun provideMakautMateApiService(retrofit: Retrofit): MakautMateApiService {
+        return retrofit.create(MakautMateApiService::class.java)
     }
+
 
     @Provides
     @Singleton
@@ -75,5 +78,16 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(YoutubeApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOpenRouterApiService(okHttpClient: OkHttpClient): OpenRouterApiService {
+        return Retrofit.Builder()
+            .baseUrl("https://openrouter.ai/api/v1/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(OpenRouterApiService::class.java)
     }
 }

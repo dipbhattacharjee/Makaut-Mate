@@ -9,10 +9,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.automirrored.filled.EventNote
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material.icons.automirrored.rounded.EventNote
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -77,7 +77,7 @@ fun SignupScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null, tint = Color.White)
                 }
                 Text(
                     text = "Create Account",
@@ -90,19 +90,19 @@ fun SignupScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            SignupTextField(value = fullName, onValueChange = { fullName = it }, label = "Full Name", icon = Icons.Default.Person)
+            SignupTextField(value = fullName, onValueChange = { fullName = it }, label = "Full Name", icon = Icons.Rounded.Person)
             Spacer(modifier = Modifier.height(16.dp))
-            SignupTextField(value = email, onValueChange = { email = it }, label = "Email Address", icon = Icons.Default.Email)
+            SignupTextField(value = email, onValueChange = { email = it }, label = "Email Address", icon = Icons.Rounded.Email)
             Spacer(modifier = Modifier.height(16.dp))
-            SignupTextField(value = password, onValueChange = { password = it }, label = "Password", icon = Icons.Default.Lock, isPassword = true)
+            SignupTextField(value = password, onValueChange = { password = it }, label = "Password", icon = Icons.Rounded.Lock, isPassword = true)
             Spacer(modifier = Modifier.height(16.dp))
-            SignupTextField(value = phone, onValueChange = { phone = it }, label = "Phone Number", icon = Icons.Default.Phone)
+            SignupTextField(value = phone, onValueChange = { phone = it }, label = "Phone Number", icon = Icons.Rounded.Phone)
             Spacer(modifier = Modifier.height(16.dp))
-            SignupTextField(value = college, onValueChange = { college = it }, label = "College Name", icon = Icons.Default.School)
+            SignupTextField(value = college, onValueChange = { college = it }, label = "College Name", icon = Icons.Rounded.School)
             Spacer(modifier = Modifier.height(16.dp))
-            SignupTextField(value = department, onValueChange = { department = it }, label = "Department", icon = Icons.Default.AccountTree)
+            SignupTextField(value = department, onValueChange = { department = it }, label = "Department", icon = Icons.Rounded.AccountTree)
             Spacer(modifier = Modifier.height(16.dp))
-            SignupTextField(value = semester, onValueChange = { semester = it }, label = "Current Semester", icon = Icons.AutoMirrored.Filled.EventNote)
+            SignupTextField(value = semester, onValueChange = { semester = it }, label = "Current Semester", icon = Icons.AutoMirrored.Rounded.EventNote)
 
             Spacer(modifier = Modifier.height(48.dp))
 
@@ -125,7 +125,7 @@ fun SignupScreen(
                     ) {
                         Text("Sign Up", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = Color.Black)
+                        Icon(Icons.AutoMirrored.Rounded.ArrowForward, contentDescription = null, tint = Color.Black)
                     }
                 }
             }

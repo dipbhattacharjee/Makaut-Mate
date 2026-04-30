@@ -7,7 +7,6 @@ import androidx.navigation.compose.composable
 import com.dev.makautmate.ui.screens.BooksScreen
 import com.dev.makautmate.ui.screens.HomeScreen
 import com.dev.makautmate.ui.screens.LoginScreen
-import com.dev.makautmate.ui.screens.NotesScreen
 import com.dev.makautmate.ui.screens.PapersScreen
 import com.dev.makautmate.ui.screens.SettingsScreen
 import com.dev.makautmate.ui.screens.SignupScreen
@@ -22,16 +21,26 @@ import com.dev.makautmate.ui.screens.AskAIScreen
 import com.dev.makautmate.ui.screens.PremiumScreen
 import com.dev.makautmate.ui.screens.OrganiserScreen
 import com.dev.makautmate.ui.screens.CalculatorScreen
+import com.dev.makautmate.ui.screens.OrganisedContentScreen
 
 import com.dev.makautmate.ui.viewmodel.AuthViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 
+import com.dev.makautmate.ui.screens.PortalWebViewScreen
+import com.dev.makautmate.ui.screens.NoticeScreen
+import com.dev.makautmate.ui.screens.MarksFormScreen
+import com.dev.makautmate.ui.screens.GradeCardScreen
+import com.dev.makautmate.ui.viewmodel.StudentViewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    authViewModel: AuthViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel(),
+    studentViewModel: StudentViewModel = hiltViewModel()
 ) {
     NavHost(
         navController = navController,
@@ -40,6 +49,7 @@ fun NavGraph(
         composable(Screen.Splash.route) {
             SplashScreen(onNext = { isLoggedIn ->
                 val destination = if (isLoggedIn) Screen.Home.route else Screen.Login.route
+                if (isLoggedIn) studentViewModel.trackActivity("login")
                 navController.navigate(destination) {
                     popUpTo(Screen.Splash.route) { inclusive = true }
                 }
@@ -48,6 +58,7 @@ fun NavGraph(
         composable(Screen.Login.route) {
             LoginScreen(
                 onLoginSuccess = {
+                    studentViewModel.trackActivity("login")
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
@@ -60,6 +71,7 @@ fun NavGraph(
         composable(Screen.Signup.route) {
             SignupScreen(
                 onSignupSuccess = {
+                    studentViewModel.trackActivity("signup")
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
@@ -68,20 +80,69 @@ fun NavGraph(
             )
         }
         composable(Screen.Home.route) {
-            val userProfile by authViewModel.currentUserProfile.collectAsState()
             HomeScreen(
-                onNavigateToNotes = { navController.navigate(Screen.Notes.route) },
-                onNavigateToPapers = { navController.navigate(Screen.Papers.route) },
-                onNavigateToBooks = { navController.navigate(Screen.Books.route) },
-                onNavigateToVideos = { navController.navigate(Screen.Videos.route) },
+                onNavigateToNotes = { 
+                    studentViewModel.trackActivity("viewed_notes")
+                    navController.navigate(Screen.Notes.route) 
+                },
+                onNavigateToPapers = { 
+                    studentViewModel.trackActivity("viewed_papers")
+                    navController.navigate(Screen.Notes.route) 
+                },
+                onNavigateToBooks = { 
+                    studentViewModel.trackActivity("viewed_books")
+                    navController.navigate(Screen.Books.route) 
+                },
+                onNavigateToVideos = { 
+                    studentViewModel.trackActivity("viewed_videos")
+                    navController.navigate(Screen.Videos.route) 
+                },
                 onNavigateToUpload = { navController.navigate(Screen.Upload.route) },
-                onNavigateToSyllabus = { navController.navigate(Screen.Syllabus.route) },
+                onNavigateToSyllabus = { 
+                    studentViewModel.trackActivity("viewed_syllabus")
+                    navController.navigate(Screen.Notes.route) 
+                },
                 onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
                 onNavigateToDownloads = { navController.navigate(Screen.Downloads.route) },
-                onNavigateToAskAI = { navController.navigate(Screen.AskAI.route) },
+                onNavigateToAskAI = { 
+                    studentViewModel.trackActivity("used_ask_ai")
+                    navController.navigate(Screen.AskAI.route) 
+                },
                 onNavigateToPremium = { navController.navigate(Screen.Premium.route) },
                 onNavigateToCalculator = { navController.navigate(Screen.Calculator.route) },
-                onNavigateToOrganiser = { navController.navigate(Screen.Organiser.route) }
+                onNavigateToOrganiser = { 
+                    studentViewModel.trackActivity("viewed_organiser")
+                    navController.navigate(Screen.Organiser.route) 
+                },
+                onNavigateToPortalUrl = { url ->
+                    navController.navigate(Screen.PortalWebView.createRoute(url))
+                },
+                onNavigateToNotices = { navController.navigate(Screen.Notices.route) },
+                onNavigateToSubmitMarks = { navController.navigate(Screen.SubmitMarks.route) },
+                onNavigateToGradeCard = { navController.navigate(Screen.GradeCard.route) },
+                authViewModel = authViewModel,
+                studentViewModel = studentViewModel
+            )
+        }
+        composable(Screen.Notices.route) {
+            NoticeScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Screen.SubmitMarks.route) {
+            MarksFormScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Screen.GradeCard.route) {
+            GradeCardScreen(onBack = { navController.popBackStack() })
+        }
+        composable(
+            route = Screen.PortalWebView.route,
+            arguments = listOf(navArgument("url") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val url = backStackEntry.arguments?.getString("url")?.let {
+                java.net.URLDecoder.decode(it, "UTF-8")
+            } ?: ""
+            PortalWebViewScreen(
+                url = url,
+                onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(Screen.Organiser.route) {
@@ -98,15 +159,23 @@ fun NavGraph(
             PremiumScreen(onBack = { navController.popBackStack() })
         }
         composable(Screen.Downloads.route) {
-            DownloadsScreen(onBack = { navController.popBackStack() })
+            DownloadsScreen(
+                onBack = { navController.popBackStack() },
+                onNavigateToPortalUrl = { url ->
+                    navController.navigate(Screen.PortalWebView.createRoute(url))
+                }
+            )
         }
         composable(Screen.Calculator.route) {
             CalculatorScreen(onBack = { navController.popBackStack() })
         }
         composable(Screen.Notes.route) {
-            NotesScreen(
+            OrganisedContentScreen(
                 onBack = { navController.popBackStack() },
-                onNavigateToUpload = { navController.navigate(Screen.UploadNote.route) }
+                onNavigateToUpload = { navController.navigate(Screen.UploadNote.route) },
+                onNavigateToPortalUrl = { url ->
+                    navController.navigate(Screen.PortalWebView.createRoute(url))
+                }
             )
         }
         composable(Screen.UploadNote.route) {
@@ -114,20 +183,30 @@ fun NavGraph(
         }
         composable(Screen.Papers.route) {
             PapersScreen(
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onNavigateToPortalUrl = { url ->
+                    navController.navigate(Screen.PortalWebView.createRoute(url))
+                }
             )
         }
         composable(Screen.Books.route) {
-            BooksScreen(onBack = { navController.popBackStack() })
-        }
-        composable(Screen.Videos.route) {
-            VideosScreen(onBack = { navController.popBackStack() })
+            BooksScreen(
+                onBack = { navController.popBackStack() },
+                onNavigateToPortalUrl = { url ->
+                    navController.navigate(Screen.PortalWebView.createRoute(url))
+                }
+            )
         }
         composable(Screen.Upload.route) {
             UploadScreen(onBack = { navController.popBackStack() })
         }
         composable(Screen.Syllabus.route) {
-            SyllabusScreen(onBack = { navController.popBackStack() })
+            SyllabusScreen(
+                onBack = { navController.popBackStack() },
+                onNavigateToPortalUrl = { url ->
+                    navController.navigate(Screen.PortalWebView.createRoute(url))
+                }
+            )
         }
         composable(Screen.Settings.route) {
             SettingsScreen(

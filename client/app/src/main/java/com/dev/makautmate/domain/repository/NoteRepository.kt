@@ -11,6 +11,8 @@ interface NoteRepository {
         author: String,
         semester: String,
         subject: String,
+        course: String = "General",
+        type: String = "Notes",
         fileUri: Uri
     ): Result<Unit>
 }

@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.makautmate.domain.model.Note
+import com.dev.makautmate.domain.model.User
+import com.dev.makautmate.domain.repository.AuthRepository
 import com.dev.makautmate.domain.usecase.GetNotesUseCase
 import com.dev.makautmate.domain.usecase.UploadNoteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class NoteViewModel @Inject constructor(
     private val getNotesUseCase: GetNotesUseCase,
-    private val uploadNoteUseCase: UploadNoteUseCase
+    private val uploadNoteUseCase: UploadNoteUseCase,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _selectedSemester = MutableStateFlow("All")
@@ -27,6 +30,9 @@ class NoteViewModel @Inject constructor(
 
     private val _uploadStatus = MutableSharedFlow<Result<Unit>>()
     val uploadStatus: SharedFlow<Result<Unit>> = _uploadStatus.asSharedFlow()
+
+    val userProfile: StateFlow<User?> = authRepository.getCurrentUser()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     val cloudNotes: StateFlow<List<Note>> = _selectedSemester
         .flatMapLatest { semester ->
@@ -47,11 +53,13 @@ class NoteViewModel @Inject constructor(
         author: String,
         semester: String,
         subject: String,
+        course: String,
+        type: String,
         fileUri: Uri
     ) {
         viewModelScope.launch {
             _isLoading.value = true
-            val result = uploadNoteUseCase(title, author, semester, subject, fileUri)
+            val result = uploadNoteUseCase(title, author, semester, subject, course, type, fileUri)
             _uploadStatus.emit(result)
             _isLoading.value = false
         }

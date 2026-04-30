@@ -21,10 +21,10 @@ class MainActivity : ComponentActivity() {
         
         // Security: Prevent screenshots and screen recording on the entire app 
         // for production security. Can be toggled per-screen if needed.
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
+//        window.setFlags(
+//            WindowManager.LayoutParams.FLAG_SECURE,
+//            WindowManager.LayoutParams.FLAG_SECURE
+//        )
 
         enableEdgeToEdge()
         setContent {

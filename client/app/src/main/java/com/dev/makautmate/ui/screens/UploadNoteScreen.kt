@@ -36,6 +36,8 @@ fun UploadNoteScreen(
     var title by remember { mutableStateOf("") }
     var author by remember { mutableStateOf("") }
     var selectedSem by remember { mutableStateOf("Sem-1") }
+    var selectedCourse by remember { mutableStateOf("CSE") }
+    var selectedType by remember { mutableStateOf("Notes") }
     var subject by remember { mutableStateOf("") }
     var selectedFileUri by remember { mutableStateOf<Uri?>(null) }
     
@@ -51,7 +53,7 @@ fun UploadNoteScreen(
     LaunchedEffect(Unit) {
         viewModel.uploadStatus.collect { result ->
             if (result.isSuccess) {
-                Toast.makeText(context, "Note uploaded successfully!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Uploaded successfully!", Toast.LENGTH_SHORT).show()
                 onBack()
             } else {
                 Toast.makeText(context, "Upload failed: ${result.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
@@ -81,7 +83,7 @@ fun UploadNoteScreen(
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Upload Notes", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Text("Upload Resource", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
             }
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -89,13 +91,13 @@ fun UploadNoteScreen(
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Title", color = Color.Gray) },
+                label = { Text("Title (e.g. Unit 1 Notes)", color = Color.Gray) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.colors(
+                colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent
+                    focusedBorderColor = BluePrimary,
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.2f)
                 )
             )
 
@@ -106,11 +108,11 @@ fun UploadNoteScreen(
                 onValueChange = { author = it },
                 label = { Text("Author Name", color = Color.Gray) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.colors(
+                colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent
+                    focusedBorderColor = BluePrimary,
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.2f)
                 )
             )
 
@@ -119,35 +121,57 @@ fun UploadNoteScreen(
             OutlinedTextField(
                 value = subject,
                 onValueChange = { subject = it },
-                label = { Text("Subject", color = Color.Gray) },
+                label = { Text("Subject (e.g. Data Structures)", color = Color.Gray) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.colors(
+                colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent
+                    focusedBorderColor = BluePrimary,
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.2f)
                 )
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text("Select Semester", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-            Spacer(modifier = Modifier.height(8.dp))
-            
+            Text("Course / Branch", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            val courses = listOf("CSE", "IT", "ECE", "EE", "ME", "CE", "BCA", "MCA")
+            FlowRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                courses.forEach { course ->
+                    FilterChip(
+                        selected = selectedCourse == course,
+                        onClick = { selectedCourse = course },
+                        label = { Text(course) },
+                        colors = FilterChipDefaults.filterChipColors(selectedContainerColor = BluePrimary, selectedLabelColor = Color.Black)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text("Semester", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             val semesters = listOf("Sem-1", "Sem-2", "Sem-3", "Sem-4", "Sem-5", "Sem-6", "Sem-7", "Sem-8")
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            FlowRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 semesters.forEach { sem ->
                     FilterChip(
                         selected = selectedSem == sem,
                         onClick = { selectedSem = sem },
                         label = { Text(sem) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = BluePrimary,
-                            selectedLabelColor = Color.Black
-                        )
+                        colors = FilterChipDefaults.filterChipColors(selectedContainerColor = BluePrimary, selectedLabelColor = Color.Black)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text("Resource Type", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            val types = listOf("Notes", "PYQ", "Syllabus")
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                types.forEach { type ->
+                    FilterChip(
+                        selected = selectedType == type,
+                        onClick = { selectedType = type },
+                        label = { Text(type) },
+                        colors = FilterChipDefaults.filterChipColors(selectedContainerColor = BluePrimary, selectedLabelColor = Color.Black)
                     )
                 }
             }
@@ -163,7 +187,7 @@ fun UploadNoteScreen(
                 Icon(Icons.Default.CloudUpload, contentDescription = null, tint = BluePrimary)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    if (selectedFileUri != null) "File Selected: ${selectedFileUri?.lastPathSegment}" else "Select PDF File",
+                    if (selectedFileUri != null) "File Selected" else "Select PDF File",
                     color = Color.White
                 )
             }
@@ -172,8 +196,8 @@ fun UploadNoteScreen(
 
             Button(
                 onClick = {
-                    if (selectedFileUri != null && title.isNotBlank()) {
-                        viewModel.uploadNote(title, author, selectedSem, subject, selectedFileUri!!)
+                    if (selectedFileUri != null && title.isNotBlank() && subject.isNotBlank()) {
+                        viewModel.uploadNote(title, author, selectedSem, subject, selectedCourse, selectedType, selectedFileUri!!)
                     } else {
                         Toast.makeText(context, "Please fill all details and select a file", Toast.LENGTH_SHORT).show()
                     }

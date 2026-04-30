@@ -34,6 +34,13 @@ sealed class Screen(val route: String, val title: String = "", val icon: ImageVe
     object AskAI : Screen("ask_ai")
     object Premium : Screen("premium")
     object Organiser : Screen("organiser")
+    object OrganisedContent : Screen("organised_content")
+    object Notices : Screen("notices")
+    object SubmitMarks : Screen("submit_marks")
+    object GradeCard : Screen("grade_card")
+    object PortalWebView : Screen("portal_webview/{url}") {
+        fun createRoute(url: String) = "portal_webview/${java.net.URLEncoder.encode(url, "UTF-8")}"
+    }
 }
 
 val bottomNavItems = listOf(

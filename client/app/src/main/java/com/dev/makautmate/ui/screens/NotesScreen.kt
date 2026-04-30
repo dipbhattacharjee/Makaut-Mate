@@ -7,11 +7,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.CloudUpload
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.NorthEast
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.CloudUpload
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.NorthEast
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -38,6 +38,7 @@ import com.dev.makautmate.ui.viewmodel.NoteViewModel
 fun NotesScreen(
     onBack: () -> Unit,
     onNavigateToUpload: () -> Unit,
+    onNavigateToPortalUrl: (String) -> Unit,
     viewModel: NoteViewModel = hiltViewModel()
 ) {
     val notes by viewModel.cloudNotes.collectAsState()
@@ -64,7 +65,7 @@ fun NotesScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null, tint = Color.White)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
@@ -98,7 +99,7 @@ fun NotesScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             if (isSelected) {
-                                Icon(Icons.Default.Check, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
+                                Icon(Icons.Rounded.Check, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(4.dp))
                             }
                             Text(
@@ -114,12 +115,20 @@ fun NotesScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             if (isLoading) {
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    repeat(5) {
-                        SkeletonCard()
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        BookLoader()
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Searching for Notes...", color = Color.Gray, fontSize = 14.sp)
+                        Spacer(modifier = Modifier.height(32.dp))
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            repeat(3) {
+                                SkeletonCard()
+                            }
+                        }
                     }
                 }
             } else {
@@ -130,7 +139,8 @@ fun NotesScreen(
                 ) {
                     items(notes) { note ->
                         NoteItem(
-                            note = note
+                            note = note,
+                            onNavigateToPortalUrl = onNavigateToPortalUrl
                         )
                     }
                 }
@@ -146,7 +156,7 @@ fun NotesScreen(
                 .align(Alignment.BottomEnd)
                 .padding(bottom = 32.dp, end = 24.dp)
         ) {
-            Icon(Icons.Default.CloudUpload, contentDescription = "Upload Note")
+            Icon(Icons.Rounded.CloudUpload, contentDescription = "Upload Note")
         }
 
         if (!isLoading && notes.isEmpty()) {
@@ -162,18 +172,11 @@ fun NotesScreen(
 }
 
 @Composable
-fun NoteItem(note: Note) {
-    val context = LocalContext.current
+fun NoteItem(note: Note, onNavigateToPortalUrl: (String) -> Unit) {
     Surface(
         onClick = {
             if (note.fileUrl.isNotBlank()) {
-                val finalUrl = if (note.fileUrl.lowercase().endsWith(".pdf")) {
-                    "https://docs.google.com/viewer?url=${note.fileUrl}"
-                } else {
-                    note.fileUrl
-                }
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(finalUrl))
-                context.startActivity(intent)
+                onNavigateToPortalUrl(note.fileUrl)
             }
         },
         modifier = Modifier.fillMaxWidth().height(90.dp),
@@ -194,8 +197,9 @@ fun NoteItem(note: Note) {
                 Text(text = note.title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 Text(text = "Subject: ${note.subject} | ${note.semester}", color = Color.Gray, fontSize = 12.sp)
             }
-            Icon(Icons.Default.NorthEast, contentDescription = null, tint = BluePrimary)
+            Icon(Icons.Rounded.NorthEast, contentDescription = null, tint = BluePrimary)
         }
     }
 }
+
 

@@ -8,9 +8,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.Logout
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -55,7 +55,7 @@ fun SettingsScreen(
             
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null, tint = Color.White)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Settings", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
@@ -81,14 +81,14 @@ fun SettingsScreen(
                             .background(Color(0xFFFFE0B2)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Diamond, contentDescription = null, tint = Color(0xFFFB8C00))
+                        Icon(Icons.Rounded.Diamond, contentDescription = null, tint = Color(0xFFFB8C00))
                     }
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text("Go Premium", color = Color.Black, fontWeight = FontWeight.ExtraBold, fontSize = 18.sp)
                             Spacer(modifier = Modifier.width(4.dp))
-                            Icon(Icons.Default.ArrowOutward, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Rounded.ArrowOutward, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
                         }
                         Text(
                             "Unlock Everything. Access to all AI Models. Go Ads free.",
@@ -104,7 +104,7 @@ fun SettingsScreen(
 
             // Notifications
             SettingsItem(
-                icon = Icons.Default.NotificationsNone,
+                icon = Icons.Rounded.NotificationsNone,
                 title = "Notifications",
                 subtitle = "Receive latest announcements from MAKAUT",
                 hasSwitch = true
@@ -119,9 +119,9 @@ fun SettingsScreen(
                 color = Color.White.copy(alpha = 0.05f)
             ) {
                 Column {
-                    SettingsItemSimple(icon = Icons.Default.StarBorder, title = "Rate Us", onClick = onNavigateToRateUs)
+                    SettingsItemSimple(icon = Icons.Rounded.StarBorder, title = "Rate Us", onClick = onNavigateToRateUs)
                     HorizontalDivider(color = Color.White.copy(alpha = 0.05f), modifier = Modifier.padding(horizontal = 24.dp))
-                    SettingsItemSimple(icon = Icons.Default.Share, title = "Share App", onClick = onNavigateToShare)
+                    SettingsItemSimple(icon = Icons.Rounded.Share, title = "Share App", onClick = onNavigateToShare)
                 }
             }
 
@@ -134,9 +134,9 @@ fun SettingsScreen(
                 color = Color.White.copy(alpha = 0.05f)
             ) {
                 Column {
-                    SettingsItemSimple(icon = Icons.Default.LockOpen, title = "Privacy Policy", onClick = onNavigateToPrivacy)
+                    SettingsItemSimple(icon = Icons.Rounded.LockOpen, title = "Privacy Policy", onClick = onNavigateToPrivacy)
                     HorizontalDivider(color = Color.White.copy(alpha = 0.05f), modifier = Modifier.padding(horizontal = 24.dp))
-                    SettingsItemSimple(icon = Icons.Default.Description, title = "Terms and Conditions", onClick = onNavigateToTerms)
+                    SettingsItemSimple(icon = Icons.Rounded.Description, title = "Terms and Conditions", onClick = onNavigateToTerms)
                 }
             }
 
@@ -149,9 +149,9 @@ fun SettingsScreen(
                 color = Color.White.copy(alpha = 0.05f)
             ) {
                 Column {
-                    SettingsItemSimple(icon = Icons.Default.MailOutline, title = "Contact", onClick = onNavigateToContact)
+                    SettingsItemSimple(icon = Icons.Rounded.MailOutline, title = "Contact", onClick = onNavigateToContact)
                     HorizontalDivider(color = Color.White.copy(alpha = 0.05f), modifier = Modifier.padding(horizontal = 24.dp))
-                    SettingsItemSimple(icon = Icons.Default.ChatBubbleOutline, title = "Feedback", onClick = onNavigateToFeedback)
+                    SettingsItemSimple(icon = Icons.Rounded.ChatBubbleOutline, title = "Feedback", onClick = onNavigateToFeedback)
                 }
             }
 
@@ -165,7 +165,7 @@ fun SettingsScreen(
                 onClick = onLogout
             ) {
                 SettingsItemSimple(
-                    icon = Icons.AutoMirrored.Filled.Logout,
+                    icon = Icons.AutoMirrored.Rounded.Logout,
                     title = "Log Out",
                     tint = Color.White,
                     onClick = onLogout
@@ -246,6 +246,6 @@ fun SettingsItemSimple(
             Spacer(modifier = Modifier.width(16.dp))
             Text(title, color = tint, fontWeight = FontWeight.SemiBold)
         }
-        Icon(Icons.Default.ArrowOutward, contentDescription = null, tint = tint.copy(alpha = 0.5f), modifier = Modifier.size(20.dp))
+        Icon(Icons.Rounded.ArrowOutward, contentDescription = null, tint = tint.copy(alpha = 0.5f), modifier = Modifier.size(20.dp))
     }
 }

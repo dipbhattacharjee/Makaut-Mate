@@ -4,10 +4,12 @@ import com.dev.makautmate.data.repository.AIRepositoryImpl
 import com.dev.makautmate.data.repository.AuthRepositoryImpl
 import com.dev.makautmate.data.repository.NoteRepositoryImpl
 import com.dev.makautmate.data.repository.PortalRepositoryImpl
+import com.dev.makautmate.data.repository.StudentRepositoryImpl
 import com.dev.makautmate.domain.repository.AIRepository
 import com.dev.makautmate.domain.repository.AuthRepository
 import com.dev.makautmate.domain.repository.NoteRepository
 import com.dev.makautmate.domain.repository.PortalRepository
+import com.dev.makautmate.domain.repository.StudentRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -41,4 +43,10 @@ abstract class RepositoryModule {
     abstract fun bindAIRepository(
         aiRepositoryImpl: AIRepositoryImpl
     ): AIRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindStudentRepository(
+        studentRepositoryImpl: StudentRepositoryImpl
+    ): StudentRepository
 }

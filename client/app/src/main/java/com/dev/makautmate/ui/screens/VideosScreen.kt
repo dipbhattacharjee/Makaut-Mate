@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.dev.makautmate.ui.components.CapybaraLoader
 import kotlinx.coroutines.delay
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -303,12 +304,12 @@ fun VideosScreen(onBack: () -> Unit) {
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
-                            PremiumLoader()
+                            CapybaraLoader()
                             Text(
-                                "Curating best educators for MAKAUT…",
+                                "Fetching top educators...",
                                 color = Color.White.copy(alpha = 0.55f),
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Normal
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium
                             )
                         }
                     }

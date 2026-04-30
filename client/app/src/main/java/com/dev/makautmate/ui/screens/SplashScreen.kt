@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dev.makautmate.ui.components.PencilLoader
 import com.dev.makautmate.ui.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
 
@@ -275,7 +276,25 @@ fun SplashScreen(
             modifier = Modifier.padding(horizontal = 32.dp)
         ) {
 
-            LogoCard(alpha = animLogoAlpha, offsetY = animLogoY)
+            Box(contentAlignment = Alignment.Center) {
+                // Background Glow
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .alpha(animLogoAlpha * 0.4f)
+                        .background(
+                            Brush.radialGradient(
+                                listOf(AccentBlue, Color.Transparent)
+                            )
+                        )
+                )
+                
+                PencilLoader(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .alpha(animLogoAlpha)
+                )
+            }
 
             Spacer(modifier = Modifier.height(28.dp))
 
@@ -283,9 +302,9 @@ fun SplashScreen(
             Text(
                 text = "MAKAUT Mate",
                 color = TextPrimary,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Medium,
-                letterSpacing = (-0.3).sp,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = (-0.5).sp,
                 modifier = Modifier
                     .alpha(animTextAlpha)
                     .graphicsLayer { translationY = animTextY }
@@ -297,28 +316,24 @@ fun SplashScreen(
             Text(
                 text = "Your smart university companion",
                 color = TextMuted,
-                fontSize = 14.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Normal,
                 letterSpacing = 0.2.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.alpha(animTagline)
             )
 
-            Spacer(modifier = Modifier.height(52.dp))
-
-            StepDots(alpha = animDots)
-
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(60.dp))
 
             LoadingBar(progress = animProgress, alpha = animBarAlpha)
 
             Spacer(modifier = Modifier.height(14.dp))
 
             Text(
-                text = "Preparing your experience",
+                text = "Initializing Systems...",
                 color = TextHint,
-                fontSize = 11.sp,
-                letterSpacing = 0.6.sp,
+                fontSize = 12.sp,
+                letterSpacing = 0.8.sp,
                 modifier = Modifier.alpha(animBarAlpha)
             )
         }

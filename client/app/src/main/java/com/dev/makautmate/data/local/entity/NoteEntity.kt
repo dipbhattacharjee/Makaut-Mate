@@ -7,10 +7,13 @@ import androidx.room.PrimaryKey
 data class NoteEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val remoteId: String = "",
     val title: String,
-    val subtitle: String,
-    val content: String,
-    val department: String,
+    val author: String = "",
+    val course: String = "",
+    val subject: String,
     val semester: String,
+    val fileUrl: String = "",
+    val type: String = "Notes",
     val timestamp: Long = System.currentTimeMillis()
 )

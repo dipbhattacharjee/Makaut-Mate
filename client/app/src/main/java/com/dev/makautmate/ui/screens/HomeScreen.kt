@@ -44,7 +44,10 @@ import android.net.NetworkCapabilities
 import androidx.compose.ui.platform.LocalContext
 import com.dev.makautmate.ui.viewmodel.AuthViewModel
 import com.dev.makautmate.ui.viewmodel.PortalViewModel
+import com.dev.makautmate.ui.viewmodel.DashboardViewModel
+import com.dev.makautmate.ui.viewmodel.StudentViewModel
 import com.dev.makautmate.ui.components.ProfileCard
+import com.dev.makautmate.ui.components.NoticeBoardSection
 
 // ─── Colour tokens ────────────────────────────────────────────────────────────
 private val BgDeep      = Color(0xFF05080C)
@@ -85,8 +88,14 @@ fun HomeScreen(
     onNavigateToOrganiser: () -> Unit = {},
     onNavigateToAskAI: () -> Unit = {},
     onNavigateToPremium: () -> Unit = {},
+    onNavigateToPortalUrl: (String) -> Unit = {},
+    onNavigateToNotices: () -> Unit = {},
+    onNavigateToSubmitMarks: () -> Unit = {},
+    onNavigateToGradeCard: () -> Unit = {},
     authViewModel: AuthViewModel = hiltViewModel(),
-    portalViewModel: PortalViewModel = hiltViewModel()
+    portalViewModel: PortalViewModel = hiltViewModel(),
+    dashboardViewModel: DashboardViewModel = hiltViewModel(),
+    studentViewModel: StudentViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     var isOnline by remember { mutableStateOf(true) }
@@ -118,8 +127,14 @@ fun HomeScreen(
             onNavigateToOrganiser,
             onNavigateToAskAI,
             onNavigateToPremium,
+            onNavigateToPortalUrl,
+            onNavigateToNotices,
+            onNavigateToSubmitMarks,
+            onNavigateToGradeCard,
             authViewModel,
-            portalViewModel
+            portalViewModel,
+            dashboardViewModel,
+            studentViewModel
         )
     }
 }
@@ -149,13 +164,21 @@ fun HomeScreenContent(
     onNavigateToOrganiser: () -> Unit = {},
     onNavigateToAskAI: () -> Unit = {},
     onNavigateToPremium: () -> Unit = {},
+    onNavigateToPortalUrl: (String) -> Unit = {},
+    onNavigateToNotices: () -> Unit = {},
+    onNavigateToSubmitMarks: () -> Unit = {},
+    onNavigateToGradeCard: () -> Unit = {},
     authViewModel: AuthViewModel,
-    portalViewModel: PortalViewModel
+    portalViewModel: PortalViewModel,
+    dashboardViewModel: DashboardViewModel,
+    studentViewModel: StudentViewModel
 ) {
     var visible by remember { mutableStateOf(false) }
     val userProfile by authViewModel.currentUserProfile.collectAsState()
     val portalProfile by portalViewModel.studentProfile.collectAsState()
+    val dashboardSummary by dashboardViewModel.summary.collectAsState()
     val isSyncing by portalViewModel.isSyncing.collectAsState()
+    val notices by studentViewModel.notices.collectAsState()
     val uriHandler = LocalUriHandler.current
     
     LaunchedEffect(Unit) { visible = true }
@@ -192,7 +215,9 @@ fun HomeScreenContent(
                     visible = visible,
                     enter = fadeIn(tween(700)) + slideInVertically { 20 }
                 ) {
-                    HeroTextSection(userName = userProfile?.fullName?.split(" ")?.firstOrNull() ?: "there")
+                    HeroTextSection(
+                        userName = dashboardSummary?.greeting ?: userProfile?.fullName?.split(" ")?.firstOrNull() ?: "there"
+                    )
                 }
             }
 
@@ -221,6 +246,15 @@ fun HomeScreenContent(
                 }
             }
 
+            // Notice Board Section (New)
+            item {
+                Spacer(modifier = Modifier.height(18.dp))
+                NoticeBoardSection(
+                    notices = notices,
+                    onClick = onNavigateToNotices
+                )
+            }
+
             // Bento Grid Redesign
             item {
                 Spacer(modifier = Modifier.height(22.dp))
@@ -231,7 +265,10 @@ fun HomeScreenContent(
                     onVideos = onNavigateToVideos,
                     onUpload = onNavigateToUpload,
                     onOrganiser = onNavigateToOrganiser,
-                    onContribute = { uriHandler.openUri("https://github.com/dipbhattacharjee/Makaut-Mate") }
+                    onContribute = { uriHandler.openUri("https://github.com/dipbhattacharjee/Makaut-Mate") },
+                    onNavigateToPortalUrl = onNavigateToPortalUrl,
+                    onNavigateToSubmitMarks = onNavigateToSubmitMarks,
+                    onNavigateToGradeCard = onNavigateToGradeCard
                 )
             }
 
@@ -449,7 +486,10 @@ fun BentoGrid(
     onVideos: () -> Unit,
     onUpload: () -> Unit,
     onOrganiser: () -> Unit,
-    onContribute: () -> Unit
+    onContribute: () -> Unit,
+    onNavigateToPortalUrl: (String) -> Unit,
+    onNavigateToSubmitMarks: () -> Unit,
+    onNavigateToGradeCard: () -> Unit
 ) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         // Left Column
@@ -463,12 +503,22 @@ fun BentoGrid(
                     bg = BgCard1,
                     titleColor = Color.White,
                     imageUrl = IMG_ORGANISER,
-                    height = 200.dp,
+                    height = 180.dp,
                     border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f)),
                     onClick = onOrganiser
                 )
             }
             StaggeredItem(visible, 2) {
+                BentoCard(
+                    title = "Grade Card",
+                    bg = Color(0xFFE0F2F1),
+                    titleColor = Color(0xFF004D40),
+                    imageUrl = IMG_PYQ,
+                    height = 120.dp,
+                    onClick = onNavigateToGradeCard
+                )
+            }
+            StaggeredItem(visible, 4) {
                 BentoCard(
                     title = "Books",
                     bg = BgCard2,
@@ -478,7 +528,7 @@ fun BentoGrid(
                     onClick = onBooks
                 )
             }
-            StaggeredItem(visible, 4) {
+            StaggeredItem(visible, 6) {
                 BentoCard(
                     title = "Contribute",
                     bg = BgCard3,
@@ -498,16 +548,26 @@ fun BentoGrid(
         ) {
             StaggeredItem(visible, 1) {
                 BentoCard(
+                    title = "Submit Marks",
+                    bg = Color(0xFFEDE7F6),
+                    titleColor = Color(0xFF311B92),
+                    imageUrl = IMG_CALC,
+                    height = 120.dp,
+                    onClick = onNavigateToSubmitMarks
+                )
+            }
+            StaggeredItem(visible, 3) {
+                BentoCard(
                     title = "Upload",
                     bg = BgCard4,
                     titleColor = Color.White,
                     imageUrl = IMG_UPLOAD_CLD,
-                    height = 180.dp,
+                    height = 160.dp,
                     border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f)),
                     onClick = onUpload
                 )
             }
-            StaggeredItem(visible, 3) {
+            StaggeredItem(visible, 5) {
                 BentoCard(
                     title = "Videos",
                     bg = BgCard5,
@@ -518,7 +578,7 @@ fun BentoGrid(
                     onClick = onVideos
                 )
             }
-            StaggeredItem(visible, 5) {
+            StaggeredItem(visible, 7) {
                 BentoCard(
                     title = "Notes",
                     bg = BgCard6,

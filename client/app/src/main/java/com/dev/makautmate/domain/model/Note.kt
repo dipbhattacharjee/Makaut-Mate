@@ -6,8 +6,9 @@ data class Note(
     val author: String = "",
     val semester: String = "",
     val subject: String = "",
+    val course: String = "",
     val fileUrl: String = "",
-    val type: String = "Notes",
+    val type: String = "Notes", // Notes, PYQ, Syllabus
     val status: String = "pending",
     val thumbnailUrl: String = "",
     val timestamp: Long = System.currentTimeMillis()

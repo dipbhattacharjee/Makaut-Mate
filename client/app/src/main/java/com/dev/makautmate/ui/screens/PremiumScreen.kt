@@ -9,9 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -164,12 +162,12 @@ fun PremiumScreen(
                     Text("Why join Premium?", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    PremiumFeature(Icons.Default.Menu, "Unlock all content")
-                    PremiumFeature(Icons.Default.AutoAwesome, "Get Access to all AI models")
-                    PremiumFeature(Icons.Default.ElectricBolt, "Get faster responses using better AI models")
-                    PremiumFeature(Icons.Default.AdsClick, "Go Ads free")
-                    PremiumFeature(Icons.Default.AllInclusive, "Access to all future premium content")
-                    PremiumFeature(Icons.Default.LockClock, "Early access to future updates")
+                    PremiumFeature(Icons.Rounded.Menu, "Unlock all content")
+                    PremiumFeature(Icons.Rounded.AutoAwesome, "Get Access to all AI models")
+                    PremiumFeature(Icons.Rounded.ElectricBolt, "Get faster responses using better AI models")
+                    PremiumFeature(Icons.Rounded.AdsClick, "Go Ads free")
+                    PremiumFeature(Icons.Rounded.AllInclusive, "Access to all future premium content")
+                    PremiumFeature(Icons.Rounded.LockClock, "Early access to future updates")
                 }
             }
 

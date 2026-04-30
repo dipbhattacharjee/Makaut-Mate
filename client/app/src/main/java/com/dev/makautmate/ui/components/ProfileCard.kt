@@ -1,7 +1,6 @@
 package com.dev.makautmate.ui.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dev.makautmate.domain.model.Notice
 import com.dev.makautmate.domain.model.StudentProfile
 
 @Composable
@@ -197,6 +197,80 @@ fun CircularProgressIndicatorCustom(
 }
 
 @Composable
+fun NoticeBoardSection(
+    notices: List<Notice>,
+    onClick: () -> Unit
+) {
+    var currentIndex by remember { mutableIntStateOf(0) }
+    
+    LaunchedEffect(notices) {
+        if (notices.isNotEmpty()) {
+            while (true) {
+                kotlinx.coroutines.delay(3000)
+                currentIndex = (currentIndex + 1) % notices.size
+            }
+        }
+    }
+
+    Column(modifier = Modifier.clickable { onClick() }) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Notice Board",
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Icon(
+                Icons.Rounded.Sync,
+                contentDescription = null,
+                tint = Color.White.copy(alpha = 0.3f),
+                modifier = Modifier.size(16.dp)
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(Color.White.copy(alpha = 0.05f))
+                .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(20.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            if (notices.isEmpty()) {
+                Text(
+                    text = "No notices today",
+                    color = Color.White.copy(alpha = 0.5f),
+                    fontSize = 14.sp
+                )
+            } else {
+                AnimatedContent(
+                    targetState = notices[currentIndex],
+                    transitionSpec = {
+                        (fadeIn(tween(500)) + slideInVertically { it })
+                            .togetherWith(fadeOut(tween(500)) + slideOutVertically { -it })
+                    },
+                    label = "noticeAnimation"
+                ) { notice ->
+                    Text(
+                        text = notice.title,
+                        color = Color.White.copy(alpha = 0.9f),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun SyncIcon(isSyncing: Boolean) {
     val rotation by rememberInfiniteTransition().animateFloat(
         initialValue = 0f,
@@ -219,22 +293,45 @@ fun SyncIcon(isSyncing: Boolean) {
 
 @Composable
 fun SyncingState() {
+    val infiniteTransition = rememberInfiniteTransition(label = "shimmer")
+    val alpha by infiniteTransition.animateFloat(
+        initialValue = 0.2f,
+        targetValue = 0.5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "alpha"
+    )
+
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        ShimmerItem(modifier = Modifier.fillMaxWidth(0.6f).height(20.dp).clip(RoundedCornerShape(4.dp)))
-        ShimmerItem(modifier = Modifier.fillMaxWidth(0.4f).height(15.dp).clip(RoundedCornerShape(4.dp)))
+        Box(modifier = Modifier.fillMaxWidth(0.6f).height(20.dp).clip(RoundedCornerShape(4.dp)).background(Color.White.copy(alpha = alpha)))
+        Box(modifier = Modifier.fillMaxWidth(0.4f).height(15.dp).clip(RoundedCornerShape(4.dp)).background(Color.White.copy(alpha = alpha)))
         Spacer(modifier = Modifier.height(20.dp))
-        ShimmerItem(modifier = Modifier.fillMaxWidth(0.8f).height(40.dp).clip(RoundedCornerShape(8.dp)))
+        Box(modifier = Modifier.fillMaxWidth(0.8f).height(40.dp).clip(RoundedCornerShape(8.dp)).background(Color.White.copy(alpha = alpha)))
     }
 }
 
 @Composable
 fun NotSyncedState() {
-    Box(modifier = Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.Center) {
-        Text(
-            "Tap to Sync Portal Data",
-            color = Color.White.copy(alpha = 0.7f),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
-        )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Portal Data Not Synced",
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "Tap to sync your academic data",
+                color = Color.White.copy(alpha = 0.6f),
+                fontSize = 14.sp
+            )
+        }
     }
 }

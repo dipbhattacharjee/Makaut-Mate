@@ -6,9 +6,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.PictureAsPdf
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.PictureAsPdf
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -34,6 +34,7 @@ import com.dev.makautmate.ui.viewmodel.AuthViewModel
 @Composable
 fun PapersScreen(
     onBack: () -> Unit,
+    onNavigateToPortalUrl: (String) -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val userProfile by viewModel.currentUserProfile.collectAsState()
@@ -62,7 +63,7 @@ fun PapersScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null, tint = Color.White)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
@@ -74,11 +75,11 @@ fun PapersScreen(
             }
 
             val papers = listOf(
-                PaperItem("Data Structures", "2023", "3rd Sem"),
-                PaperItem("Computer Organization", "2023", "3rd Sem"),
-                PaperItem("Discrete Mathematics", "2022", "3rd Sem"),
-                PaperItem("Object Oriented Programming", "2023", "3rd Sem"),
-                PaperItem("Digital Electronics", "2021", "3rd Sem")
+                PaperItem("Data Structures", "2023", "3rd Sem", "https://makautexams.net/aicte_details/syllabus/Syllabus/CSE/Sem3.pdf"),
+                PaperItem("Computer Organization", "2023", "3rd Sem", "https://makautexams.net/aicte_details/syllabus/Syllabus/CSE/Sem3.pdf"),
+                PaperItem("Discrete Mathematics", "2022", "3rd Sem", "https://makautexams.net/aicte_details/syllabus/Syllabus/CSE/Sem3.pdf"),
+                PaperItem("Object Oriented Programming", "2023", "3rd Sem", "https://makautexams.net/aicte_details/syllabus/Syllabus/CSE/Sem3.pdf"),
+                PaperItem("Digital Electronics", "2021", "3rd Sem", "https://makautexams.net/aicte_details/syllabus/Syllabus/CSE/Sem3.pdf")
             )
 
             if (isLoading) {
@@ -91,7 +92,7 @@ fun PapersScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(papers) { paper ->
-                        PaperCard(paper)
+                        PaperCard(paper, onNavigateToPortalUrl)
                     }
                 }
             }
@@ -100,10 +101,10 @@ fun PapersScreen(
     }
 }
 
-data class PaperItem(val title: String, val year: String, val sem: String)
+data class PaperItem(val title: String, val year: String, val sem: String, val url: String)
 
 @Composable
-fun PaperCard(paper: PaperItem) {
+fun PaperCard(paper: PaperItem, onNavigateToPortalUrl: (String) -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -121,7 +122,7 @@ fun PaperCard(paper: PaperItem) {
                 color = BluePrimary.copy(alpha = 0.1f)
             ) {
                 Icon(
-                    Icons.Default.PictureAsPdf,
+                    Icons.Rounded.PictureAsPdf,
                     contentDescription = null,
                     modifier = Modifier.padding(12.dp),
                     tint = BluePrimary
@@ -133,7 +134,7 @@ fun PaperCard(paper: PaperItem) {
                 Text(text = "${paper.sem} | ${paper.year}", fontSize = 14.sp, color = Color.Gray)
             }
             Button(
-                onClick = { /* TODO: Download/View */ },
+                onClick = { onNavigateToPortalUrl(paper.url) },
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = BluePrimary)

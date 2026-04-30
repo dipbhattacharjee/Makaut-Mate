@@ -1,6 +1,9 @@
 package com.dev.makautmate.data.repository
 
 import com.dev.makautmate.BuildConfig
+import com.dev.makautmate.data.remote.Message
+import com.dev.makautmate.data.remote.OpenRouterApiService
+import com.dev.makautmate.data.remote.OpenRouterRequest
 import com.dev.makautmate.domain.repository.AIRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -9,69 +12,47 @@ import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
 import com.dev.makautmate.ui.screens.ChatMessage
-
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONArray
-import org.json.JSONObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Singleton
 class AIRepositoryImpl @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val apiService: OpenRouterApiService
 ) : AIRepository {
-
-    private val client = OkHttpClient()
-    private val mediaType = "application/json; charset=utf-8".toMediaType()
 
     private val FREE_DAILY_LIMIT = 5
     private val FREE_MONTHLY_LIMIT = 50
 
     override suspend fun getChatResponse(messages: List<ChatMessage>): Result<String> = withContext(Dispatchers.IO) {
         try {
-            val jsonMessages = JSONArray()
+            val apiMessages = mutableListOf<Message>()
             // Add system prompt for context
-            jsonMessages.put(JSONObject().apply {
-                put("role", "system")
-                put("content", "You are MAKAUT Mate AI, a specialized assistant for students of MAKAUT (Maulana Abul Kalam Azad University of Technology). " +
+            apiMessages.add(Message(
+                role = "system",
+                content = "You are MAKAUT Mate AI, a specialized assistant for students of MAKAUT (Maulana Abul Kalam Azad University of Technology). " +
                         "Provide detailed information about MAKAUT syllabus (BCA), previous year questions (PYQs), exam schedules, and academic guidance. " +
-                        "Always be helpful, concise, and professional.")
-            })
+                        "Always be helpful, concise, and professional."
+            ))
+            
             messages.forEach { msg ->
-                jsonMessages.put(JSONObject().apply {
-                    put("role", if (msg.isUser) "user" else "assistant")
-                    put("content", msg.text)
-                })
+                apiMessages.add(Message(
+                    role = if (msg.isUser) "user" else "assistant",
+                    content = msg.text
+                ))
             }
 
-            val requestBody = JSONObject().apply {
-                put("model", "google/gemini-2.0-flash-exp:free")
-                put("messages", jsonMessages)
-            }
+            val request = OpenRouterRequest(messages = apiMessages)
+            
+            val response = apiService.getCompletion(
+                apiKey = "Bearer ${BuildConfig.OPEN_ROUTER_API_KEY}",
+                request = request
+            )
 
-            val request = Request.Builder()
-                .url("https://openrouter.ai/api/v1/chat/completions")
-                .post(requestBody.toString().toRequestBody(mediaType))
-                .addHeader("Authorization", "Bearer ${BuildConfig.OPEN_ROUTER_API_KEY}")
-                .addHeader("HTTP-Referer", "https://makautmate.dev") // Required by OpenRouter
-                .addHeader("X-Title", "MAKAUT Mate")
-                .build()
-
-            client.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) throw Exception("Unexpected code $response")
-                
-                val responseData = response.body?.string() ?: ""
-                val jsonResponse = JSONObject(responseData)
-                val aiMessage = jsonResponse.getJSONArray("choices")
-                    .getJSONObject(0)
-                    .getJSONObject("message")
-                    .getString("content")
-                
-                Result.success(aiMessage)
-            }
+            val aiMessage = response.choices.firstOrNull()?.message?.content
+                ?: throw Exception("Empty response from AI")
+            
+            Result.success(aiMessage)
         } catch (e: Exception) {
             Result.failure(e)
         }

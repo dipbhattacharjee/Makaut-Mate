@@ -21,6 +21,16 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Login
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import com.dev.makautmate.R
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.gms.common.api.ApiException
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,27 +48,41 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
     val authState by authViewModel.authState.collectAsState()
-    val isPortalSyncing by portalViewModel.isSyncing.collectAsState()
-    val portalError by portalViewModel.error.collectAsState(initial = null)
     
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
-    var rollNumber by remember { mutableStateOf("") }
-    var dob by remember { mutableStateOf("") }
+    // Google Sign-In Launcher
+    val gso = remember {
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+    }
+    val googleSignInClient = remember { GoogleSignIn.getClient(context, gso) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            account?.idToken?.let { idToken ->
+                authViewModel.signInWithGoogle(idToken)
+            }
+        } catch (e: ApiException) {
+            scope.launch {
+                snackbarHostState.showSnackbar("Google Sign-In failed: ${e.message}")
+            }
+        }
+    }
 
     LaunchedEffect(authState) {
         if (authState is AuthViewModel.AuthState.Success) {
             onLoginSuccess()
         } else if (authState is AuthViewModel.AuthState.Error) {
             snackbarHostState.showSnackbar((authState as AuthViewModel.AuthState.Error).message)
-        }
-    }
-
-    LaunchedEffect(portalError) {
-        portalError?.let {
-            snackbarHostState.showSnackbar(it)
         }
     }
 
@@ -128,68 +152,33 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // Roll Number Field
-                OutlinedTextField(
-                    value = rollNumber,
-                    onValueChange = { rollNumber = it },
-                    label = { Text("University Roll Number", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BluePrimary,
-                        unfocusedBorderColor = Color.DarkGray,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Date of Birth Field
-                OutlinedTextField(
-                    value = dob,
-                    onValueChange = { dob = it },
-                    label = { Text("Date of Birth (DD-MM-YYYY)", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Example: 15-08-2005", color = Color.DarkGray) },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BluePrimary,
-                        unfocusedBorderColor = Color.DarkGray,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true
-                )
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                // The New Main Login Button
+                // Google Login Button
                 Button(
                     onClick = {
-                        if (rollNumber.isNotBlank() && dob.isNotBlank()) {
-                            portalViewModel.loginToPortal(rollNumber, dob) {
-                                onLoginSuccess()
-                            }
-                        } else {
-                            scope.launch {
-                                snackbarHostState.showSnackbar("Please enter Roll Number and DOB")
-                            }
-                        }
+                        launcher.launch(googleSignInClient.signInIntent)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
                     shape = RoundedCornerShape(28.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = BluePrimary),
-                    enabled = !isPortalSyncing
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color.Black
+                    ),
+                    enabled = authState !is AuthViewModel.AuthState.Loading
                 ) {
-                    if (isPortalSyncing) {
-                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+                    if (authState is AuthViewModel.AuthState.Loading) {
+                        CircularProgressIndicator(color = BluePrimary, modifier = Modifier.size(24.dp))
                     } else {
-                        Text("Login to Portal", color = Color.Black, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Rounded.Login,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text("Sign in with Google", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
 

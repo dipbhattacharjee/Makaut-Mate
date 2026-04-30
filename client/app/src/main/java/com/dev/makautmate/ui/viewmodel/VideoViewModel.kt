@@ -2,6 +2,7 @@ package com.dev.makautmate.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dev.makautmate.BuildConfig
 import com.dev.makautmate.data.model.YoutubePlaylistItem
 import com.dev.makautmate.data.remote.YoutubeApiService
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +22,7 @@ class VideoViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    private val API_KEY = "AIzaSyD4_4C95w2l5s2gGKU1fltZFfvNytio6oc" // Using current active key from google-services.json
+    private val API_KEY = BuildConfig.YOUTUBE_API_KEY
 
     fun fetchPlaylist(playlistId: String) {
         viewModelScope.launch {

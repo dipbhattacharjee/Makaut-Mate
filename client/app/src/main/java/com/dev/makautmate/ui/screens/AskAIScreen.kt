@@ -684,7 +684,6 @@ fun AskAIScreen(
                 }
 
                 // ── INPUT BAR ──────────────────────────────────────────────
-                val inputHasFocus by remember { mutableStateOf(false) }
                 val borderAlpha by animateFloatAsState(
                     targetValue = if (message.isNotBlank()) 0.4f else 0.1f,
                     animationSpec = tween(300),
@@ -694,26 +693,17 @@ fun AskAIScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 10.dp)
-                ) {
-                    // Glow shadow behind input when active
-                    if (message.isNotBlank()) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp)
-                                .align(Alignment.BottomCenter)
-                                .offset(y = 4.dp)
-                                .clip(RoundedCornerShape(26.dp))
-                                .background(Color(0xFF3B82F6).copy(alpha = 0.12f))
-                                .blur(12.dp)
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(Color.Transparent, Color(0xFF030609).copy(alpha = 0.8f))
+                            )
                         )
-                    }
-
+                        .padding(horizontal = 16.dp, vertical = 20.dp)
+                ) {
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         color = Color(0xFF0D1B32),
-                        shape = RoundedCornerShape(26.dp),
+                        shape = RoundedCornerShape(28.dp),
                         border = androidx.compose.foundation.BorderStroke(
                             1.dp,
                             Brush.linearGradient(
@@ -722,10 +712,12 @@ fun AskAIScreen(
                                     Color(0xFF2DD4BF).copy(alpha = borderAlpha * 0.6f)
                                 )
                             )
-                        )
+                        ),
+                        tonalElevation = 8.dp
                     ) {
                         Row(
-                            modifier = Modifier.padding(start = 16.dp, end = 8.dp, top = 6.dp, bottom = 6.dp),
+                            modifier = Modifier
+                                .padding(horizontal = 4.dp, vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             TextField(
@@ -733,14 +725,13 @@ fun AskAIScreen(
                                 onValueChange = { message = it },
                                 placeholder = {
                                     Text(
-                                        "Ask anything about MAKAUT…",
-                                        color = Color.White.copy(alpha = 0.25f),
-                                        fontSize = 14.sp
+                                        "Ask MAKAUT Mate AI…",
+                                        color = Color.White.copy(alpha = 0.3f),
+                                        fontSize = 15.sp
                                     )
                                 },
                                 modifier = Modifier
-                                    .weight(1f)
-                                    .heightIn(max = 120.dp),
+                                    .weight(1f),
                                 maxLines = 4,
                                 colors = TextFieldDefaults.colors(
                                     focusedContainerColor = Color.Transparent,
@@ -753,8 +744,6 @@ fun AskAIScreen(
                                 )
                             )
 
-                            Spacer(modifier = Modifier.width(4.dp))
-
                             SendButton(
                                 enabled = message.isNotBlank(),
                                 onClick = {
@@ -764,6 +753,7 @@ fun AskAIScreen(
                                     }
                                 }
                             )
+                            Spacer(modifier = Modifier.width(4.dp))
                         }
                     }
                 }

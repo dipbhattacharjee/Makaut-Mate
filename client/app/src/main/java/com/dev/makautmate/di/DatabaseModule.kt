@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.dev.makautmate.data.local.AppDatabase
 import com.dev.makautmate.data.local.dao.AttendanceDao
+import com.dev.makautmate.data.local.dao.BookDao
 import com.dev.makautmate.data.local.dao.NoteDao
 import com.dev.makautmate.data.local.dao.StudentProfileDao
 import dagger.Module
@@ -40,5 +41,10 @@ object DatabaseModule {
     @Provides
     fun provideStudentProfileDao(database: AppDatabase): StudentProfileDao {
         return database.studentProfileDao()
+    }
+
+    @Provides
+    fun provideBookDao(database: AppDatabase): BookDao {
+        return database.bookDao()
     }
 }

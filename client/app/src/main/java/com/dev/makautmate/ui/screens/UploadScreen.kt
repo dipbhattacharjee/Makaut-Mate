@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dev.makautmate.ui.viewmodel.NoteViewModel
 import com.dev.makautmate.ui.theme.BluePrimary
+import com.dev.makautmate.ui.components.StandardInput
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,6 +42,7 @@ fun UploadScreen(
     var title by remember { mutableStateOf("") }
     var semester by remember { mutableStateOf("") }
     var branch by remember { mutableStateOf("") }
+    var course by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("Notes") }
     var fileUri by remember { mutableStateOf<Uri?>(null) }
     var fileName by remember { mutableStateOf("") }
@@ -48,6 +50,7 @@ fun UploadScreen(
     val types = listOf("Notes", "Books", "Organizers", "PYQs")
     val isLoading by viewModel.isLoading.collectAsState()
     val uploadStatus by viewModel.uploadStatus.collectAsState(initial = null)
+    val userProfile by viewModel.userProfile.collectAsState()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -63,6 +66,9 @@ fun UploadScreen(
         uploadStatus?.onSuccess {
             snackbarHostState.showSnackbar("Upload successful! Pending approval.")
             title = ""
+            course = ""
+            semester = ""
+            branch = ""
             fileUri = null
             fileName = ""
         }?.onFailure {
@@ -143,7 +149,7 @@ fun UploadScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                UploadInput(
+                StandardInput(
                     value = title,
                     onValueChange = { title = it },
                     label = "Title (e.g. Physics Module 1)",
@@ -152,9 +158,18 @@ fun UploadScreen(
                 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                StandardInput(
+                    value = course,
+                    onValueChange = { course = it },
+                    label = "Course (e.g. B.Tech, BCA)",
+                    icon = Icons.Rounded.Category
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Box(modifier = Modifier.weight(1f)) {
-                        UploadInput(
+                        StandardInput(
                             value = semester,
                             onValueChange = { semester = it },
                             label = "Semester",
@@ -162,7 +177,7 @@ fun UploadScreen(
                         )
                     }
                     Box(modifier = Modifier.weight(1f)) {
-                        UploadInput(
+                        StandardInput(
                             value = branch,
                             onValueChange = { branch = it },
                             label = "Branch",
@@ -209,9 +224,11 @@ fun UploadScreen(
                         if (fileUri != null && title.isNotBlank()) {
                             viewModel.uploadNote(
                                 title = title,
-                                author = "User", // This should be user's name
+                                author = userProfile?.fullName ?: "User",
                                 semester = semester,
-                                subject = branch, // Using branch as subject for now
+                                subject = branch,
+                                course = course,
+                                type = selectedType,
                                 fileUri = fileUri!!
                             )
                         }
@@ -221,7 +238,7 @@ fun UploadScreen(
                         .height(56.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5B8CFF)),
-                    enabled = !isLoading && fileUri != null && title.isNotBlank()
+                    enabled = !isLoading && fileUri != null && title.isNotBlank() && course.isNotBlank()
                 ) {
                     if (isLoading) {
                         CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
@@ -236,27 +253,3 @@ fun UploadScreen(
     }
 }
 
-@Composable
-fun UploadInput(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label) },
-        leadingIcon = { Icon(icon, contentDescription = null, tint = Color(0xFF82B1FF).copy(alpha = 0.7f)) },
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            unfocusedTextColor = Color.White,
-            focusedTextColor = Color.White,
-            unfocusedBorderColor = Color.White.copy(alpha = 0.1f),
-            focusedBorderColor = Color(0xFF82B1FF),
-            unfocusedLabelColor = Color.White.copy(alpha = 0.5f),
-            focusedLabelColor = Color(0xFF82B1FF)
-        )
-    )
-}
