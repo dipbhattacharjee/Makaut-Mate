@@ -10,8 +10,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="128bb4c0-92bc-4d6f-9b0b-ef0eb7e6a878" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/app/src/main/java/com/dev/makautmate/domain/usecase/portal/FetchStudentResultsUseCase.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/app/src/main/java/com/dev/makautmate/domain/usecase/portal/LoginToPortalUseCase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/dev/makautmate/di/NetworkModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/dev/makautmate/di/NetworkModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/dev/makautmate/ui/viewmodel/PortalViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/dev/makautmate/ui/viewmodel/PortalViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/domain/usecase/CheckAIRateLimitUseCase.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/domain/usecase/GetAIResponseUseCase.kt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,18 +48,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "dipbhattacharjee"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;dipbhattacharjee&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/dipbhattacharjee/Makaut-Mate.git",
-    "accountId": "19a8754a-35e3-4106-8b3e-681e14f9a7b6"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/dipbhattacharjee/Makaut-Mate.git&quot;,
+    &quot;accountId&quot;: &quot;19a8754a-35e3-4106-8b3e-681e14f9a7b6&quot;
   }
-}]]></component>
+}</component>
   <component name="GradleScriptDefinitionsStorage" workingDir="$PROJECT_DIR$" gradleHome="C:\Users\bhatt\.gradle\wrapper\dists\gradle-9.3.1-bin\23ovyewtku6u96viwx3xl3oks\gradle-9.3.1" javaHome="C:\Program Files\Android\Android Studio\jbr" gradleVersion="9.3.1" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
@@ -71,10 +77,11 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "Merging main",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/bhatt/AndroidStudioProjects/MAKAUTMate/app"
   }
